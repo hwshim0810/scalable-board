@@ -1,2 +1,23 @@
 *.class
 *.log
+
+# sbt specific
+.cache/
+.history/
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# IntelliJ idea
+*.iml
+.idea/
+.idea_modules
+
+# Eclipse idea
+.classpath
+.project
+.settings
