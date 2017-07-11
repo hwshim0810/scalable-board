@@ -1,6 +1,6 @@
-function elem(tagName) {
+var elem = function(tagName) {
   return document.createElement(tagName);
-}
+};
 
 Element.prototype.clear = function() {
   while (this.firstChild) {

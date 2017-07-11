@@ -1,16 +1,6 @@
-const components = new Map();
+eval(load('util/element.js'));
 
-function initialize() {
-  for (let component of document.getElementsByClassName('component')) {
-    try {
-      components.set(component.id, eval('new ' + component.dataset.class + '(component)'))
-    } catch (e) {
-      console.error(e.stack);
-    }
-  }
-}
-
-class ListBoard {
+var ListBoard = class {
   constructor(element) {
     this.elmRoot = element;
 

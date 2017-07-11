@@ -1,10 +1,10 @@
-function Some(value) {
+var Some = function(value) {
   return new Option(value);
-}
+};
 
-function None() {
+var None = function() {
   return new Option();
-}
+};
 
 class Option {
   constructor(value) {
