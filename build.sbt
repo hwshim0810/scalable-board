@@ -10,5 +10,6 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % "10.0.9",
-  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.9" % Test
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.9" % Test,
+  "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.9"
 )
