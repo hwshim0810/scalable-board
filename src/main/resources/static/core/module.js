@@ -8,13 +8,13 @@ const def = (function() {
     }
   }
 
-  const TIMEOUT = 3000;
+  const TIMEOUT = 2000;
   const HEAD = document.getElementsByTagName('head')[0];
   const MODULES = new Map();
   const SCRIPTS = new Set();
 
   // Register scripts that already loaded.
-  for (script of HEAD.getElementsByTagName('script'))
+  for (let script of HEAD.getElementsByTagName('script'))
     SCRIPTS.add(script.getAttribute('src'));
 
   function loadScript(url) {
@@ -42,7 +42,7 @@ const def = (function() {
   }
 
   function isTimedout(start) {
-    return (new Date().getMilliseconds() - start) > TIMEOUT;
+    return (new Date().getTime() - start) > TIMEOUT;
   }
 
   function register(context, name, object) {
@@ -53,9 +53,10 @@ const def = (function() {
   }
 
   async function _def(_dependencies, _body) {
+    const currentURL = getCurrentScriptURL();
     let aliasList = {};
     let dependencyURLs = [];
-    for (d of _dependencies) {
+    for (let d of _dependencies) {
       let tmp = d.split(' as ');
       let path = tmp[0];
       let alias = tmp[1];
@@ -65,27 +66,32 @@ const def = (function() {
     }
 
     // HACK: Load scripts synchronously forcibly
-    for (url of dependencyURLs){
+    for (let url of dependencyURLs){
       loadScript(url);
-      const start = new Date().getMilliseconds();
+      const start = new Date().getTime();
       let dependency;
-      while (dependency === undefined && !isTimedout(start))
+      while (dependency === undefined) {
         dependency = await getModule(url);
+        if (isTimedout(start)) {
+          console.error('Timeout occured while loading ' + url);
+          dependency = new Module(url);
+        }
+      }
 
       let alias = aliasList[dependency.path];
       if (alias !== undefined) {
         register(this, alias, dependency.exports);
       } else {
-        for (_export in dependency.exports) {
+        for (let _export in dependency.exports) {
           register(this, _export, dependency.exports[_export]);
         }
       }
     }
 
-    let _module = new Module(getCurrentScriptURL());
+    let _module = new Module(currentURL);
     _module.exports = {}
     _body(_module.exports);
-    MODULES.set(getCurrentScriptURL(), _module);
+    MODULES.set(currentURL, _module);
   }
 
   return _def;
