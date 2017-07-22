@@ -13,6 +13,7 @@ const def = (function() {
   const MODULES = new Map();
   const SCRIPTS = new Set();
 
+  // Register scripts that already loaded.
   for (script of HEAD.getElementsByTagName('script'))
     SCRIPTS.add(script.getAttribute('src'));
 
@@ -47,7 +48,7 @@ const def = (function() {
   function register(context, name, object) {
     if (context[name] === undefined)
       context[name] = object;
-    else
+    else if (context[name] !== object)
       throw new Error('[Module.register] Name conflict: ' + name);
   }
 
