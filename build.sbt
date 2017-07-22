@@ -1,18 +1,42 @@
 name := "scalable-board"
-
-version := "1.0"
-
+organization := "lazylife"
+version := "1.0.0"
 scalaVersion := "2.12.1"
 
-sourceDirectories in Compile += new File("src")
+libraryDependencies ++= {
+  val akkaV = "10.0.4"
+  val scalaTestV = "3.0.1"
+  val slickVersion = "3.2.0-M2"
+  val circeV = "0.6.1"
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+  Seq(
+    "com.typesafe.akka" %% "akka-http-core" % akkaV,
+    "com.typesafe.akka" %% "akka-http" % akkaV,
+    "de.heikoseeberger" %% "akka-http-circe" % "1.11.0",
 
-libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http" % "10.0.9",
-  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.9" % Test,
-  "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.9",
-  "com.typesafe.slick" %% "slick" % "3.2.0",
-  "org.slf4j"% "slf4j-nop"% "1.6.4",
-  "postgresql" % "postgresql" % "9.1-901.jdbc4"
-)
+    "com.typesafe.slick" %% "slick" % slickVersion,
+    "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
+    "org.flywaydb" % "flyway-core" % "3.2.1",
+
+    "com.zaxxer" % "HikariCP" % "2.4.5",
+    "org.slf4j" % "slf4j-nop" % "1.6.4",
+
+    "io.circe" %% "circe-core" % circeV,
+    "io.circe" %% "circe-generic" % circeV,
+    "io.circe" %% "circe-parser" % circeV,
+
+    "org.scalatest" %% "scalatest" % scalaTestV % "test",
+    "com.typesafe.akka" %% "akka-http-testkit" % akkaV % "test",
+    "ru.yandex.qatools.embed" % "postgresql-embedded" % "1.15" % "test",
+
+    "org.scala-lang" % "scala-reflect" % "2.12.1",
+    "org.scala-lang.modules" % "scala-xml_2.12" % "1.0.6"
+  )
+}
+
+Revolver.settings
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+
+dockerExposedPorts := Seq(9000)
+dockerEntrypoint := Seq("bin/%s" format executableScriptName.value, "-Dconfig.resource=docker.conf")
