@@ -14,6 +14,17 @@
     }
   }
 
+  // Generate helper functions for elm-like representation
+  const tags = [
+    'a', 'b', 'p', 'span', 'div',
+    'ul', 'ol', 'li',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'form', 'input', 'label', 'select', 'option'
+  ];
+  for (let tag of tags)
+    if (this[tag] === undefined)
+      this[tag] = (attrs, children) => new _Node(tag, attrs, children);
+
   /**
    * Create DOM node based on Virtual-DOM node and return it.
    * @param  {_Node|string} _node Virtual-DOM node
@@ -25,10 +36,10 @@
     else if (_node instanceof _Node) {
       const elem = document.createElement(_node.tag);
 
-      for (p in _node.attrs)
-        elem.setAttribute(p, _node.attrs[p]);
+      for (let p in _node.attrs)
+        setAttribute(elem, p, _node.attrs[p]);
 
-      for (_childNode of _node.children)
+      for (let _childNode of _node.children)
         elem.appendChild(createElement(_childNode));
 
       return elem;
@@ -83,12 +94,19 @@
    * @param  {Object} oldAttrs  Old attributes of Virtual-DOM node
    */
   function updateAttrs(node, newAttrs, oldAttrs) {
-    for (p in newAttrs)
+    for (let p in newAttrs)
       if (newAttrs[p] === undefined)
         node.removeAttribute(p);
 
-    for (p in oldAttrs)
+    for (let p in oldAttrs)
       if (newAttrs[p] !== oldAttrs[p])
-        node.setAttribute(p, newAttrs[p]);
+        setAttribute(node, p, newAttrs[p]);
+  }
+
+  function setAttribute(node, key, value) {
+    if (key === 'onclick')
+      node.onclick = value;
+    else
+      node.setAttribute(key, value);
   }
 })();
