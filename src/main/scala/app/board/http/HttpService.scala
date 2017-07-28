@@ -17,12 +17,11 @@ class HttpService(usersService: UsersService,
   val articlesRouter = new ArticlesServiceRoute(articlesService)
 
   val routes =
-    pathPrefix("board") {
-      corsHandler {
-        usersRouter.route ~
-        authRouter.route ~
-        articlesRouter.route
-      }
+    corsHandler {
+      usersRouter.route ~
+      authRouter.route ~
+      articlesRouter.route ~
+      getFromResourceDirectory("static") ~
+      getFromResource("static/main.html")
     }
-
 }

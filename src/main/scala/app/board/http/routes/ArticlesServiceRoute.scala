@@ -19,21 +19,14 @@ class ArticlesServiceRoute(val articlesService: ArticlesService)
   import articlesService._
 
   val route =
-    pathEndOrSingleSlash {
-      get {
-        getFromResource("static/main.html")
-      }
-    } ~ {
-      getFromResourceDirectory("static")
-    } ~
-    path(IntNumber / "info") { page =>
-      get {
-        complete(getArticles().map(_.asJson))
-      }
-    } ~
-    path("articles" / IntNumber / "info") { id =>
-      get {
-        complete(getArticleById(id).map(_.asJson))
+    get {
+      pathPrefix("board") {
+        path(LongNumber / "info") { page =>
+          complete(getArticles().map(_.asJson))
+        } ~
+        path("articles" / LongNumber / "info") { id =>
+          complete(getArticleById(id).map(_.asJson))
+        }
       }
     }
 }
